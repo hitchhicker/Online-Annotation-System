@@ -37,7 +37,7 @@ $(function () {
 
     });
 
-    var url = 'http://localhost:5000/upload',
+    var upload_api = 'http://localhost:5000/upload',
         uploadButton = $('<button/>')
             .addClass('btn btn-primary btn-block')
             .prop('disabled', true)
@@ -45,7 +45,7 @@ $(function () {
             .on('mouseenter', function () {
                 var $this = $(this);
                 if (!getAnnotationsForBindButton($this)) {
-                    $this.removeClass().addClass('btn btn-danger btn-block')
+                    $this.removeClass().addClass('btn btn-warning btn-block')
                         .text('Annotate first');
                 } else {
                     $this.removeClass().addClass('btn btn-primary btn-block')
@@ -64,17 +64,44 @@ $(function () {
                         .prop('disabled', true);
                     var imageEncoded = $this.data("imageEncoded");
                     var fileName = $this.data("fileName");
-                    sendData(url, fileName, imageEncoded, annotations)
-                        .then(function () {
-                            $this.text('Uploaded').removeClass()
-                                .addClass('btn btn-success btn-block disabled'),
+                    if (self.fetch) {
+                        fetch(upload_api, {
+                            method: 'post',
+                            headers: {
+                                'Accept': 'application/json, text/plain, */*',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                filename: fileName,
+                                imageBase64: imageEncoded,
+                                annotations: annotations
+                            })
+                        }).then(function (response) {
+                            if (response.ok) {
+                                $this.text('Uploaded').removeClass()
+                                    .addClass('btn btn-success btn-block disabled');
                                 $this.prev().find('img')
-                                    .css('border', 'none')
-                        }, function () {
-                            console.log('fail')
+                                    .css('border', 'none');
+                            } else {
+                                $this.text('Fail: server error, please contact to administrator.').removeClass()
+                                    .addClass('btn btn-danger btn-block disabled');
+                                console.log('Fail');
+                            }
                         });
-
-                    // TODO: in case of failing
+                    }
+                    else {
+                        sendData(upload_api, fileName, imageEncoded, annotations)
+                            .then(function () {
+                                $this.text('Uploaded').removeClass()
+                                    .addClass('btn btn-success btn-block disabled'),
+                                    $this.prev().find('img')
+                                        .css('border', 'none')
+                            }, function () {
+                                $this.text('Fail: server error, please contact to administrator.').removeClass()
+                                    .addClass('btn btn-danger btn-block disabled');
+                                console.log('Fail');
+                            });
+                    }
                 } else {
                     $this.removeClass().addClass('btn btn-danger btn-block')
                         .text('Fail: No Annotatons.');
@@ -83,7 +110,7 @@ $(function () {
                 }
             });
     $('#fileupload').fileupload({
-        url: url,
+        url: upload_api,
         dataType: 'json',
         autoUpload: false,
         acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
