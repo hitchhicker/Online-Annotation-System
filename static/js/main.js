@@ -76,17 +76,15 @@ $(function () {
                                 imageBase64: imageEncoded,
                                 annotations: annotations
                             })
-                        }).then(function (response) {
-                            if (response.ok) {
-                                $this.text('Uploaded').removeClass()
-                                    .addClass('btn btn-success btn-block disabled');
-                                $this.prev().find('img')
-                                    .css('border', 'none');
-                            } else {
-                                $this.text('Fail: server error, please contact to administrator.').removeClass()
-                                    .addClass('btn btn-danger btn-block disabled');
-                                console.log('Fail');
-                            }
+                        }).then(function () {
+                            $this.text('Uploaded').removeClass()
+                                .addClass('btn btn-success btn-block disabled');
+                            $this.prev().find('img')
+                                .css('border', 'none');
+                        }, function () {
+                            $this.text('Fail: server error, please contact to administrator.').removeClass()
+                                .addClass('btn btn-danger btn-block disabled');
+                            console.log('Fail');
                         });
                     }
                     else {
