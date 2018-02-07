@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
+import logging
 
 from flask import render_template, jsonify
 from flask import request
@@ -12,8 +13,9 @@ from xml_generater import XMLGenerator
 from utils import get_image_width_and_height
 
 executor = ThreadPoolExecutor(1)
-
-BASE_SAVE_PATH = "/Users/YU/Desktop/"
+logger = logging.getLogger("views")
+XML_SAVE_PATH = os.environ.get("XML_SAVE_PATH")
+IMAGE_SAVE_PATH = os.environ.get("IMAGE_SAVE_PATH")
 
 
 def home():
@@ -23,9 +25,7 @@ def home():
 def upload_annotations_and_photo():
     if request.method == 'POST':
         annotations = Annotations(request.json['annotations'])
-        print(annotations)
-        for k in request.json.values():
-            print(type(k))
+        logger.info(annotations)
         image = request.json['imageBase64']
         filename = request.json['filename']
         files = []
@@ -37,7 +37,7 @@ def upload_annotations_and_photo():
 
 
 def _async_upload_image(img, filename, annotations):
-    save_path = os.path.abspath(os.path.join('./static/images', filename))
+    save_path = os.path.abspath(os.path.join(IMAGE_SAVE_PATH, filename))
     with open(save_path, "wb") as fh:
         fh.write(base64.decodebytes(str.encode(img)))
     width, height = get_image_width_and_height(save_path)
@@ -49,4 +49,4 @@ def _async_upload_image(img, filename, annotations):
     size = Size(width=width, height=height, depth=3)
     xml_generator = XMLGenerator(folder=label, filename=filename, path=save_path, size=size, objects=objects)
     xml_generator.build_xml_tree()
-    xml_generator.write_xml_to_path(base_path=BASE_SAVE_PATH)
+    xml_generator.write_xml_to_path(base_path=XML_SAVE_PATH)
