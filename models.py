@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
+from flask_login import UserMixin
+
 
 Size = namedtuple('Size', ['width', 'height', 'depth'])
 
@@ -88,3 +90,36 @@ class Annotations:
 
     def __str__(self):
         return self.__repr__() + '\n' + str(self.annotations)
+
+
+class User(UserMixin):
+    __shared_state = {}
+
+    def __init__(self):
+        self.__dict__ = self.__shared_state
+        self._id = 0
+        self._username = "bingbinadmin"
+        self._password = "pass"
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def password(self):
+        return self._password
+
+    @property
+    def username(self):
+        return self._username
+
+    def is_active(self):
+        return True
+
+
+class DB:
+    @classmethod
+    def find_user(cls, id=None, username=None):
+        if username == "bingbinadmin" or id == 0:
+            return User()
+        return None

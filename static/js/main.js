@@ -37,7 +37,7 @@ $(function () {
 
     });
 
-    var upload_api = 'http://localhost:5000/upload',
+    var upload_api = 'http://192.168.99.100:5000/upload',
         uploadButton = $('<button/>')
             .addClass('btn btn-primary btn-block')
             .prop('disabled', true)

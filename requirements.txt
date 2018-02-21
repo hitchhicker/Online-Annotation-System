@@ -1,3 +1,6 @@
 flask
 pytest
 image
+flask-wtf
+flask-Principal
+flask-login
