@@ -1,3 +1,4 @@
+var ALLOWED_LABELS = ["packaging","glass","paper", "electronic", "bio", "cumbersome", "textile", "metal", "greentrash"];
 function sendData(url, fileName, imageFile, annotations) {
     return new Promise(function (resolve, reject) {
         $.ajax({
@@ -29,15 +30,31 @@ function getAnnotationsForBindButton(bindButton) {
         return null;
     }
 }
+
+function isValidLabel(label) {
+    if (ALLOWED_LABELS.includes(label.toLowerCase())){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+anno.addHandler('onAnnotationCreated', function(annotation) {
+        console.log("ON CREATE");
+        console.log(isValidLabel(annotation.text));
+});
+
+anno.addHandler('onAnnotationUpdated', function(annotation) {
+    console.log("ON UPDATE");
+    console.log(isValidLabel(annotation.text));
+});
+
 /*jslint unparam: true, regexp: true */
 /*global window, $ */
 $(function () {
     'use strict';
-    anno.addHandler('onAnnotationCreated', function (annotation) {
-
-    });
-
-    var upload_api = 'http://192.168.99.100:5000/upload',
+      //var upload_api = 'http://192.168.99.100:5000/upload',
+      var upload_api = 'http://localhost:5000/upload',
         uploadButton = $('<button/>')
             .addClass('btn btn-primary btn-block')
             .prop('disabled', true)
