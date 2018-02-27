@@ -51,7 +51,6 @@ function areAnnotationsValid(annotations) {
 /*global window, $ */
 $(function () {
     'use strict';
-
     function fail($this) {
         $this.text('Fail: server error, please contact to administrator.').removeClass()
             .addClass('btn btn-danger btn-block disabled');
@@ -69,23 +68,22 @@ $(function () {
     }
     //var upload_api = 'http://192.168.99.100:5000/upload',
     var upload_api = '/upload',
-        hasAnnotations = false,
-        annotationsAreValid = false,
         uploadButton = $('<button/>')
             .addClass('btn btn-primary btn-block')
             .prop('disabled', true)
             .text('Processing...')
             .on('mouseenter', function () {
                 var $this = $(this);
-                if (!hasAnnotations) {
+                var annotations = getAnnotationsForBindButton($this);
+                if (!annotations) {
                     $this.removeClass().addClass('btn btn-warning btn-block')
                         .text('Annotate first');
                     return;
                 }
-                if (!annotationsAreValid) {
+                if (!areAnnotationsValid(annotations)) {
                     $this.removeClass().addClass('btn btn-warning btn-block')
                         .text('Category is not valid.');
-                    return
+                    return;
                 }
                 $this.removeClass().addClass('btn btn-primary btn-block')
                     .text('Upload')
@@ -96,35 +94,29 @@ $(function () {
             .on('click', function () {
                 var $this = $(this);
                 var annotations = getAnnotationsForBindButton($this);
-                if (annotations) {
-                    hasAnnotations = true;
-                } else {
+                if (!annotations) {
                     $this.removeClass().addClass('btn btn-danger btn-block')
                         .text('Fail: No Annotatons.');
                     $this.prev().find('img')
                         .css('border', '4px solid #f44336');
                     return;
                 }
-                if (areAnnotationsValid(annotations)) {
-                    annotationsAreValid = true;
-                } else {
+                if (!areAnnotationsValid(annotations)) {
                     $this.removeClass().addClass('btn btn-danger btn-block')
                         .text('Fail: Category is not valid.');
                     return;
                 }
-                if (hasAnnotations && annotationsAreValid) {
-                    $this.removeClass().addClass('btn btn-info btn-block disabled')
-                        .text('Uploading')
-                        .prop('disabled', true);
-                    var imageEncoded = $this.data("imageEncoded");
-                    var fileName = $this.data("fileName");
-                    sendData(upload_api, fileName, imageEncoded, annotations)
-                        .then(function () {
-                            success($this);
-                        }, function () {
-                            fail($this);
-                    });
-                }
+                $this.removeClass().addClass('btn btn-info btn-block disabled')
+                    .text('Uploading')
+                    .prop('disabled', true);
+                var imageEncoded = $this.data("imageEncoded");
+                var fileName = $this.data("fileName");
+                sendData(upload_api, fileName, imageEncoded, annotations)
+                    .then(function () {
+                        success($this);
+                    }, function () {
+                        fail($this);
+                });
             });
     $('#fileupload').fileupload({
         url: upload_api,
@@ -158,7 +150,7 @@ $(function () {
                 if (!index) {
                     uploadButton.clone(true).data({
                         "imageEncoded": image_encoded,
-                        "fileName": file.name
+                        "fileName": file.name,
                     }).appendTo(data.context);
                 }
             };
