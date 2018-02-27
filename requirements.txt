@@ -4,3 +4,4 @@ image
 flask-wtf
 flask-Principal
 flask-login
+flask-cors

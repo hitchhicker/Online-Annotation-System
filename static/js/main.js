@@ -1,4 +1,5 @@
-var ALLOWED_LABELS = ["packaging","glass","paper", "electronic", "bio", "cumbersome", "textile", "metal", "greentrash"];
+var ALLOWED_CATEGORIES = ["plastique", "metal", "papier", "verre",
+    "menage", "encombrants", "electroniques", "piles", "ampoule", "vetements", "medicaments"];
 function sendData(url, fileName, imageFile, annotations) {
     return new Promise(function (resolve, reject) {
         $.ajax({
@@ -6,8 +7,8 @@ function sendData(url, fileName, imageFile, annotations) {
             url: url,
             data: JSON.stringify({
                 'filename': fileName,
-                'file': imageFile,
-                'annotation': annotations
+                'imageBase64': imageFile,
+                'annotations': annotations
             }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
@@ -31,44 +32,64 @@ function getAnnotationsForBindButton(bindButton) {
     }
 }
 
-function isValidLabel(label) {
-    if (ALLOWED_LABELS.includes(label.toLowerCase())){
+function isValidCategory(category) {
+    if (ALLOWED_CATEGORIES.includes(category.toLowerCase())) {
         return true;
     } else {
         return false;
     }
 }
-
-anno.addHandler('onAnnotationCreated', function(annotation) {
-        console.log("ON CREATE");
-        console.log(isValidLabel(annotation.text));
-});
-
-anno.addHandler('onAnnotationUpdated', function(annotation) {
-    console.log("ON UPDATE");
-    console.log(isValidLabel(annotation.text));
-});
-
+function areAnnotationsValid(annotations) {
+    for (var i = 0; i < annotations.length; i++) {
+        if (!isValidCategory(annotations[i].text)) {
+            return false;
+        }
+    }
+    return true;
+}
 /*jslint unparam: true, regexp: true */
 /*global window, $ */
 $(function () {
     'use strict';
-      //var upload_api = 'http://192.168.99.100:5000/upload',
-      var upload_api = 'http://localhost:5000/upload',
+
+    function fail($this) {
+        $this.text('Fail: server error, please contact to administrator.').removeClass()
+            .addClass('btn btn-danger btn-block disabled');
+        console.log('Fail');
+    }
+    function success($this) {
+            $this.text('Uploaded').removeClass()
+                .addClass('btn btn-success btn-block disabled');
+            var linkedImage = $this.prev().find('img');
+            anno.destroy(linkedImage.attr('src'));
+            linkedImage.fadeOut();
+            linkedImage.fadeOut("slow");
+            $this.fadeOut(2000);
+            $this.remove();
+    }
+    //var upload_api = 'http://192.168.99.100:5000/upload',
+    var upload_api = '/upload',
+        hasAnnotations = false,
+        annotationsAreValid = false,
         uploadButton = $('<button/>')
             .addClass('btn btn-primary btn-block')
             .prop('disabled', true)
             .text('Processing...')
             .on('mouseenter', function () {
                 var $this = $(this);
-                if (!getAnnotationsForBindButton($this)) {
+                if (!hasAnnotations) {
                     $this.removeClass().addClass('btn btn-warning btn-block')
                         .text('Annotate first');
-                } else {
-                    $this.removeClass().addClass('btn btn-primary btn-block')
-                        .text('Upload')
-                        .css('border', 'none');
+                    return;
                 }
+                if (!annotationsAreValid) {
+                    $this.removeClass().addClass('btn btn-warning btn-block')
+                        .text('Category is not valid.');
+                    return
+                }
+                $this.removeClass().addClass('btn btn-primary btn-block')
+                    .text('Upload')
+                    .css('border', 'none');
             })
             .on('mouseleave', function () {
             })
@@ -76,52 +97,33 @@ $(function () {
                 var $this = $(this);
                 var annotations = getAnnotationsForBindButton($this);
                 if (annotations) {
-                    $this.removeClass().addClass('btn btn-info btn-block disabled')
-                        .text('Uploading')
-                        .prop('disabled', true);
-                    var imageEncoded = $this.data("imageEncoded");
-                    var fileName = $this.data("fileName");
-                    if (self.fetch) {
-                        fetch(upload_api, {
-                            method: 'post',
-                            headers: {
-                                'Accept': 'application/json, text/plain, */*',
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                filename: fileName,
-                                imageBase64: imageEncoded,
-                                annotations: annotations
-                            })
-                        }).then(function () {
-                            $this.text('Uploaded').removeClass()
-                                .addClass('btn btn-success btn-block disabled');
-                            $this.prev().find('img')
-                                .css('border', 'none');
-                        }, function () {
-                            $this.text('Fail: server error, please contact to administrator.').removeClass()
-                                .addClass('btn btn-danger btn-block disabled');
-                            console.log('Fail');
-                        });
-                    }
-                    else {
-                        sendData(upload_api, fileName, imageEncoded, annotations)
-                            .then(function () {
-                                $this.text('Uploaded').removeClass()
-                                    .addClass('btn btn-success btn-block disabled'),
-                                    $this.prev().find('img')
-                                        .css('border', 'none')
-                            }, function () {
-                                $this.text('Fail: server error, please contact to administrator.').removeClass()
-                                    .addClass('btn btn-danger btn-block disabled');
-                                console.log('Fail');
-                            });
-                    }
+                    hasAnnotations = true;
                 } else {
                     $this.removeClass().addClass('btn btn-danger btn-block')
                         .text('Fail: No Annotatons.');
                     $this.prev().find('img')
                         .css('border', '4px solid #f44336');
+                    return;
+                }
+                if (areAnnotationsValid(annotations)) {
+                    annotationsAreValid = true;
+                } else {
+                    $this.removeClass().addClass('btn btn-danger btn-block')
+                        .text('Fail: Category is not valid.');
+                    return;
+                }
+                if (hasAnnotations && annotationsAreValid) {
+                    $this.removeClass().addClass('btn btn-info btn-block disabled')
+                        .text('Uploading')
+                        .prop('disabled', true);
+                    var imageEncoded = $this.data("imageEncoded");
+                    var fileName = $this.data("fileName");
+                    sendData(upload_api, fileName, imageEncoded, annotations)
+                        .then(function () {
+                            success($this);
+                        }, function () {
+                            fail($this);
+                    });
                 }
             });
     $('#fileupload').fileupload({

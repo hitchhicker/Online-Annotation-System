@@ -4,11 +4,28 @@
     <meta charset="utf-8">
     <title>Annotation System</title>
     <!-- Bootstrap styles -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/jquery.fileupload.css">
     <link rel="stylesheet" href="static/css/annotorious.css">
+    <link rel="stylesheet" href="static/css/home.css">
 </head>
 <body>
+<div class="container">
+      <div class="starter-template">
+        <h1>BingBin Image Annotation System</h1>
+        <p class="lead">Click <strong>Add files...</strong> to begin.</p>
+      </div>
+      <div class="alert alert-info">
+          <strong>Info!</strong> You have to type the right category when you annotate images!
+      </div>
+      <h2>Available Categories:</h2>
+        <ul class="list-group">
+            {% for category in categories %}
+            <li class="list-group-item">{{ category }}</li>
+            {% endfor %}
+        </ul>
+      <br>
+</div>
 <div class="container">
     <span class="btn btn-success fileinput-button">
         <i class="glyphicon glyphicon-plus"></i>

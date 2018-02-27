@@ -1,0 +1,1 @@
+docker run -d -e XML_SAVE_PATH=/home/ -e IMAGE_SAVE_PATH=/home -v $(pwd)/:/var/www/app --net=host -ti annotation

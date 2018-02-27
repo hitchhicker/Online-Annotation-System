@@ -2,7 +2,6 @@
 from collections import namedtuple
 from flask_login import UserMixin
 
-
 Size = namedtuple('Size', ['width', 'height', 'depth'])
 
 
@@ -77,8 +76,8 @@ class Annotations:
         self.annotations = annotations
 
     def __iter__(self):
-        label = self.annotations[0]['text']
         for annotation in self.annotations:
+            label = annotation['text']
             geometry = annotation['shapes'][0]['geometry']
             bounding_box = BoundingBox(relative_x=geometry['x'],
                                        relative_y=geometry['y'],
@@ -115,6 +114,15 @@ class User(UserMixin):
 
     def is_active(self):
         return True
+
+    def is_anonymous(self):
+        return False
+
+    def is_authenticated(self):
+        return True
+
+    def __str__(self):
+        return str(self.username)
 
 
 class DB:
