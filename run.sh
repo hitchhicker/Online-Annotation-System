@@ -1,11 +1,23 @@
+function check_env_var {
+    if [ -z "$XML_SAVE_PATH" ]; then
+        echo 'XML_SAVE_PATH was not set, please export it.'
+        exit
+    fi
+    if [ -z "$IMAGE_SAVE_PATH" ]; then
+        echo 'IMAGE_SAVE_PATH was not set, please export it.'
+        exit
+    fi
+}
 if [ $1 == "-s" ]
     # server
 then
-    docker run -d -e XML_SAVE_PATH=. -e IMAGE_SAVE_PATH=. -v $(pwd)/:/var/www/app --net=host -ti annotation
+    check_env_var
+    docker run -d -e XML_SAVE_PATH=$XML_SAVE_PATH -e IMAGE_SAVE_PATH=$IMAGE_SAVE_PATH -v $(pwd)/:/var/www/app --net=host -ti annotation
 elif [ $1 == "-d" ]
     # debug
 then
-    docker run --rm -e XML_SAVE_PATH=. -e IMAGE_SAVE_PATH=. -v $(pwd)/:/var/www/app --net=host -ti annotation /bin/bash
+    check_env_var
+    docker run --rm -e XML_SAVE_PATH=$XML_SAVE_PATH -e IMAGE_SAVE_PATH=$IMAGE_SAVE_PATH -v $(pwd)/:/var/www/app --net=host -ti annotation /bin/bash
 elif [ $1 == "-r" ]
 then
     # remove
