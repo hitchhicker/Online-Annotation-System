@@ -98,7 +98,7 @@ class User(UserMixin):
         self.__dict__ = self.__shared_state
         self._id = 0
         self._username = "bingbinadmin"
-        self._password = "pass"
+        self._password = ":k}5#%e%kzJ}rNAY_qF4}28d{UDY>hx2"
 
     @property
     def id(self):
