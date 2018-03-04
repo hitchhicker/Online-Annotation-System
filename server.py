@@ -9,8 +9,8 @@ from flask_cors import CORS
 import views
 from models import DB
 
-# logging.basicConfig(filename='log', filemode='a', level=logging.INFO,
-#                     format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(filename='log', filemode='a', level=logging.INFO,
+                    format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
 

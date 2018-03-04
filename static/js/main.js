@@ -66,7 +66,6 @@ $(function () {
             $this.fadeOut(2000);
             $this.remove();
     }
-    //var upload_api = 'http://192.168.99.100:5000/upload',
     var upload_api = '/upload',
         uploadButton = $('<button/>')
             .addClass('btn btn-primary btn-block')

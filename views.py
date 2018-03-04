@@ -62,6 +62,7 @@ def logout():
 @login_required
 def upload_annotations_and_photo():
     if request.method == 'POST':
+        logger.info("We have a request post.")
         annotations = Annotations(request.json['annotations'])
         logger.info(annotations)
         image = request.json['imageBase64']
@@ -82,6 +83,8 @@ def _async_upload_image(img, filename, annotations):
             os.path.join(IMAGE_SAVE_PATH, label), filename)
         _save_image(img, save_path)
         width, height = get_image_width_and_height(save_path)
+        logger.info("Image is saved in " + str(save_path))
+        logger.info("Image size: " + str((width, height)))
         size = Size(width=width, height=height, depth=3)
         xml_generator = XMLGenerator(folder=label, filename=filename, path=save_path, size=size, objects=objects)
         xml_generator.build_xml_tree()

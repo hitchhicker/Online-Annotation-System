@@ -1,5 +1,8 @@
 import os
+import logging
 import xml.etree.cElementTree as ET
+
+logger = logging.getLogger("xml_generator")
 
 
 class XMLGenerator:
@@ -34,6 +37,7 @@ class XMLGenerator:
         return os.path.splitext(self.filename)[0] + '.xml'
 
     def build_xml_tree(self):
+        logger.info("Start building xml tree.")
         self.root = ET.Element("annotation")
 
         folder = ET.SubElement(self.root, "folder")
@@ -82,11 +86,13 @@ class XMLGenerator:
             ymax.text = str(obj.bounding_box.y_max)
 
         self.indent(self.root)
+        logger.info("Finish building xml tree.")
 
     def write_xml_to_path(self, base_path):
         if self.root is not None:
             tree = ET.ElementTree(self.root)
             where_to_store = os.path.join(base_path, self.folder)
+            logger.info("Write " + str(self.xml_file_name) + " to " + str(where_to_store))
             if not os.path.exists(where_to_store):
                 os.mkdir(where_to_store)
             tree.write(os.path.join(where_to_store, self.xml_file_name), xml_declaration=True, encoding='utf-8',
