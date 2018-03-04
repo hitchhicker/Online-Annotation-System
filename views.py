@@ -66,28 +66,29 @@ def logout():
 @login_required
 def upload_annotations_and_photo():
     if request.method == 'POST':
-        logger.info("We have a request post.")
+        logger.info("Receive a request post.")
         annotations = Annotations(request.json['annotations'])
-        logger.info(annotations)
+        logger.info("Annotation information: " + str(annotations))
         image = request.json['imageBase64']
         filename = request.json['filename']
         files = []
         if image:
             filename = secure_filename(filename)
             files.append({'name': filename})
-            executor.submit(_async_upload_image, image, filename, annotations)
+            _upload_image(image, filename, annotations)
             return jsonify(files=files), 201
 
 
-def _async_upload_image(img, filename, annotations):
+def _upload_image(img, filename, annotations):
     objects = [Object(name=label, bounding_box=bounding_box) for label, bounding_box in annotations]
     label = objects[0].name if len(objects) else None
     if label is not None:
         save_path, filename = get_no_repeated_save_path_and_filename(
             os.path.join(IMAGE_SAVE_PATH, label), filename)
+        logger.info("Start saving image. in: " + save_path)
         _save_image(img, save_path)
+        logger.info("Saved image in: " + save_path)
         width, height = get_image_width_and_height(save_path)
-        logger.info("Image is saved in " + str(save_path))
         logger.info("Image size: " + str((width, height)))
         size = Size(width=width, height=height, depth=3)
         xml_generator = XMLGenerator(folder=label, filename=filename, path=save_path, size=size, objects=objects)

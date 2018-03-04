@@ -88,7 +88,7 @@ class Annotations:
             yield label, bounding_box
 
     def __str__(self):
-        return self.__repr__() + '\n' + str(self.annotations)
+        return str(self.annotations)
 
 
 class User(UserMixin):
