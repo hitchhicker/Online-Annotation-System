@@ -6,6 +6,7 @@ import logging
 from flask import render_template, jsonify, request, current_app, redirect, session
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import Identity, identity_changed, AnonymousIdentity
+
 from wtforms import PasswordField, StringField, validators, SubmitField
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
@@ -19,13 +20,16 @@ executor = ThreadPoolExecutor(1)
 logger = logging.getLogger("views")
 XML_SAVE_PATH = os.environ.get("XML_SAVE_PATH")
 IMAGE_SAVE_PATH = os.environ.get("IMAGE_SAVE_PATH")
-ALLOWED_CATEGORIES = ["plastique", "metal", "papier", "verre", "menage", "encombrants", "electroniques", "piles",
-                      "ampoule", "vetements", "medicaments"]
+ALLOWED_CATEGORIES = ["plastique|塑料", "metal|金属", "papier|纸", "verre|玻璃", "menage|绿色垃圾", "encombrants|大体积垃圾",
+                      "electroniques|电子产品", "piles|电池",
+                      "ampoule|灯泡", "vetements|衣服", "medicaments|药品"]
 
 
 @login_required
 def home():
-    return render_template('home.html', categories=ALLOWED_CATEGORIES, current_user=current_user)
+    return render_template('home.html',
+                           categories=ALLOWED_CATEGORIES,
+                           current_user=current_user)
 
 
 class LoginForm(FlaskForm):
