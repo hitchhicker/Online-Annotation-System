@@ -99,3 +99,7 @@ def _upload_image(img, filename, annotations):
 def _save_image(img, where_to_save):
     with open(where_to_save, "wb") as fh:
         fh.write(base64.decodebytes(str.encode(img)))
+
+
+def all_categories():
+    return jsonify([cat.split('|')[0] for cat in ALLOWED_CATEGORIES])

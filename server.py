@@ -18,6 +18,7 @@ app.add_url_rule('/', view_func=views.home)
 app.add_url_rule('/upload', view_func=views.upload_annotations_and_photo, methods=['POST'])
 app.add_url_rule('/login', view_func=views.login, methods=['GET', 'POST'])
 app.add_url_rule('/logout', view_func=views.logout)
+app.add_url_rule('/categories/all', view_func=views.all_categories, methods=['GET'])
 app.secret_key = '\xcc\x93\xc6\xc0\xf2*sY\xadWn\xa9\x9e\xb6x\xb5\xc8{2\xe7Z\n\x07\xa5'
 CORS(app, resources={r"/upload": {"origins": "*"}})
 Principal(app)
