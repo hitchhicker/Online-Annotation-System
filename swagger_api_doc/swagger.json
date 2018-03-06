@@ -1,0 +1,105 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API",
+    "description": "Online Image Annotation API",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/category/all": {
+      "get": {
+        "summary": "Display available categories",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "summary": "Upload annotations",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Body"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body": {
+        "type": "object",
+        "properties": {
+          "imageBase64": {
+            "type": "string",
+            "example": "... /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAEBAQEBAQEBAQEBAQECAgMCAgICAgQDA ..."
+          },
+          "filename": {
+            "type": "string",
+            "example": "sample.jpg"
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "shape": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "geometry": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number",
+                            "example": 0.036
+                          },
+                          "y": {
+                            "type": "number",
+                            "example": 0.12
+                          },
+                          "width": {
+                            "type": "number",
+                            "example": 0.45
+                          },
+                          "height": {
+                            "type": "number",
+                            "example": 0.87
+                          }
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "example": "rect"
+                      }
+                    }
+                  }
+                },
+                "text": {
+                  "type": "string",
+                  "example": "glass"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

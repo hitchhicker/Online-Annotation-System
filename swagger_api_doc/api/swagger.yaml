@@ -1,0 +1,72 @@
+swagger: '2.0'
+info:
+  title: Annotation System API
+  description: An onlien Image annotation system
+  version: 1.0.0
+host: api.todo.com
+schemes:
+  - http
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /categories/all:
+    get:
+      summary: Display available categories.
+      responses:
+        '200':
+          description: Ok
+  /upload:
+    post:
+      summary: Upload image and annotations information.
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: meta
+          description: Meta information
+          schema:
+            $ref: '#/definitions/Body'
+      responses:
+        '201':
+          description: Created
+definitions:
+  Body:
+    type: object
+    properties:
+      imageBase64:
+        type: string
+        example: >-
+          ... /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAEBAQEBAQEBAQEBAQECAgMCAgICAgQDA
+          ...
+      filename:
+        type: string
+        example: test.jpg
+      annotatins:
+        type: array
+        items:
+          type: object
+          properties:
+            shape:
+              type: array
+              items:
+                type: object
+                properties:
+                  geometry:
+                    type: object
+                    properties:
+                      x:
+                        type: number
+                        example: 0.036
+                      'y':
+                        type: number
+                        example: 0.12
+                      width:
+                        type: number
+                        example: 0.45
+                      height:
+                        type: number
+                        example: 0.87
+                  text:
+                    type: string
+                    example: glass
