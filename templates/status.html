@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Category Status</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Categories Status</h2>
+    {% for key, value in counts.items() %}
+        <div class="progress">
+            {% set width = value / expected_number * 100 %}
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ value|safe }}"
+                 aria-valuemin="0" aria-valuemax="{{ expected_number }}"
+                 style="width:{{ width }}%">
+                {{ key }} {{ value }} %
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
+

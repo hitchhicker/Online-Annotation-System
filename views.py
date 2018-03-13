@@ -3,6 +3,7 @@ import base64
 import os
 import logging
 
+from collections import defaultdict
 from flask import render_template, jsonify, request, current_app, redirect, session
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import Identity, identity_changed, AnonymousIdentity
@@ -14,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from models import Object, Size, Annotations, DB
 from xml_generater import XMLGenerator
-from utils import get_image_width_and_height, get_no_repeated_save_path_and_filename
+from utils import get_image_width_and_height, get_no_repeated_save_path_and_filename, count_files_by_category
 
 executor = ThreadPoolExecutor(1)
 logger = logging.getLogger("views")
@@ -23,7 +24,7 @@ IMAGE_SAVE_PATH = os.environ.get("IMAGE_SAVE_PATH")
 ALLOWED_CATEGORIES = ["plastique|塑料", "metal|金属", "papier|纸", "verre|玻璃", "menage|绿色垃圾", "encombrants|大体积垃圾",
                       "electroniques|电子产品", "piles|电池",
                       "ampoule|灯泡", "vetements|衣服", "medicaments|药品"]
-
+EXPECTED_NUMBER = 200
 
 @login_required
 def home():
@@ -103,3 +104,10 @@ def _save_image(img, where_to_save):
 
 def all_categories():
     return jsonify([cat.split('|')[0] for cat in ALLOWED_CATEGORIES])
+
+
+def categories_status():
+    counts = defaultdict(lambda: 0)
+    for cat in map(lambda x: x.split('|')[0], ALLOWED_CATEGORIES):
+        counts[cat] = count_files_by_category(IMAGE_SAVE_PATH, cat)
+    return render_template('status.html', counts=counts, expected_number=EXPECTED_NUMBER)
