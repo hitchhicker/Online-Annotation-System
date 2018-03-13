@@ -1,5 +1,5 @@
 var ALLOWED_CATEGORIES = ["plastique", "metal", "papier", "verre",
-    "menage", "encombrants", "electroniques", "piles", "ampoule", "vetements", "medicaments"];
+    "menage", "encombrants", "electroniques", "piles", "ampoule", "vetements", "medicaments", "carton"];
 function sendData(url, fileName, imageFile, annotations) {
     return new Promise(function (resolve, reject) {
         $.ajax({
