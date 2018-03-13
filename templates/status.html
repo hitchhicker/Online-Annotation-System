@@ -14,9 +14,8 @@
         <div class="progress">
             {% set width = value / expected_number * 100 %}
             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ value|safe }}"
-                 aria-valuemin="0" aria-valuemax="{{ expected_number }}"
-                 style="width:{{ width }}%">
-                {{ key }} {{ value }} %
+                 aria-valuemin="0" aria-valuemax="{{ expected_number }}" style="width:{{ width }}%">
+                {{ key }} {{ width }} %
             </div>
         </div>
     {% endfor %}
