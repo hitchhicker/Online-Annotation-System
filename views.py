@@ -23,7 +23,7 @@ XML_SAVE_PATH = os.environ.get("XML_SAVE_PATH")
 IMAGE_SAVE_PATH = os.environ.get("IMAGE_SAVE_PATH")
 ALLOWED_CATEGORIES = ["plastique|塑料", "metal|金属", "papier|纸", "verre|玻璃", "menage|绿色垃圾", "encombrants|大体积垃圾",
                       "electroniques|电子产品", "piles|电池",
-                      "ampoule|灯泡", "vetements|衣服", "medicaments|药品", "carton|纸板"]
+                      "ampoule|灯泡", "vetements|衣服", "medicaments|药品", "carton|纸板", "humain|人类", "cigarette|香烟"]
 EXPECTED_NUMBER = 200
 
 
@@ -111,4 +111,4 @@ def categories_status():
     counts = defaultdict(lambda: 0)
     for cat in map(lambda x: x.split('|')[0], ALLOWED_CATEGORIES):
         counts[cat] = count_files_by_category(IMAGE_SAVE_PATH, cat)
-    return render_template('status.html', counts=counts, expected_number=EXPECTED_NUMBER)
+    return render_template('status.html', counts=sorted(counts.items()), expected_number=EXPECTED_NUMBER)

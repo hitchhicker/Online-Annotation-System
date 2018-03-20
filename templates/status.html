@@ -10,7 +10,7 @@
 
 <div class="container">
     <h2>Categories Status</h2>
-    {% for key, value in counts.items() %}
+    {% for key, value in counts %}
         <div class="progress">
             {% set width = value / expected_number * 100 %}
             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ value|safe }}"
