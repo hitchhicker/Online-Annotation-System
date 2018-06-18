@@ -35,7 +35,7 @@ def mocked_annotations():
 
 
 def test_iter_annotations(mocked_annotations):
-    annotations = list(Annotations(mocked_annotations))
+    annotations = list(Annotations(mocked_annotations, image_width=500, image_height=343))
     label1, bounding_box = annotations[0]
     label2, _ = annotations[1]
     assert label1 == 'glass'

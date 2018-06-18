@@ -1,12 +1,13 @@
 import os
+import io
 
 from PIL import Image
 
 
-def get_image_width_and_height(image_path):
-    with Image.open(image_path) as img:
-        width, height = img.size
-        return width, height
+def get_image_width_and_height(image_data):
+    im = Image.open(io.BytesIO(image_data))
+    width, height = im.size
+    return width, height
 
 
 def get_no_repeated_save_path_and_filename(base_path, filename):

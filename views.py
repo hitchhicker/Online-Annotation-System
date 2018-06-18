@@ -69,38 +69,47 @@ def logout():
 def upload_annotations_and_photo():
     if request.method == 'POST':
         logger.info("Receive a request post.")
-        annotations = Annotations(request.json['annotations'])
-        logger.info("Annotation information: " + str(annotations))
         image = request.json['imageBase64']
-        filename = request.json['filename']
-        files = []
         if image:
+            image_data = base64.decodebytes(str.encode(image))
+            image_width, image_height = get_image_width_and_height(image_data)
+            annotations = Annotations(
+                annotations=request.json['annotations'],
+                image_width=image_width,
+                image_height=image_height)
+            logger.info("Annotation information: " + str(annotations))
+            filename = request.json['filename']
+            files = []
             filename = secure_filename(filename)
             files.append({'name': filename})
-            _upload_image(image, filename, annotations)
+            _upload_image(image_data, filename, annotations, image_width, image_height)
             return jsonify(files=files), 201
 
 
-def _upload_image(img, filename, annotations):
+def _upload_image(image_data, filename, annotations, image_width, image_height):
     objects = [Object(name=label, bounding_box=bounding_box) for label, bounding_box in annotations]
     label = objects[0].name if len(objects) else None
     if label is not None:
         save_path, filename = get_no_repeated_save_path_and_filename(
             os.path.join(IMAGE_SAVE_PATH, label), filename)
         logger.info("Start saving image. in: " + save_path)
-        _save_image(img, save_path)
+        _save_image(image_data, save_path)
         logger.info("Saved image in: " + save_path)
-        width, height = get_image_width_and_height(save_path)
-        logger.info("Image size: " + str((width, height)))
-        size = Size(width=width, height=height, depth=3)
-        xml_generator = XMLGenerator(folder=label, filename=filename, path=save_path, size=size, objects=objects)
+        logger.info("Image size: " + str((image_width, image_height)))
+        size = Size(width=image_width, height=image_height, depth=3)
+        xml_generator = XMLGenerator(
+            folder=label,
+            filename=filename,
+            path=save_path,
+            size=size,
+            objects=objects)
         xml_generator.build_xml_tree()
         xml_generator.write_xml_to_path(base_path=XML_SAVE_PATH)
 
 
-def _save_image(img, where_to_save):
+def _save_image(image_data, where_to_save):
     with open(where_to_save, "wb") as fh:
-        fh.write(base64.decodebytes(str.encode(img)))
+        fh.write(image_data)
 
 
 def all_categories():

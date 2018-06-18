@@ -70,10 +70,12 @@ class Object:
 
 
 class Annotations:
-    def __init__(self, annotations):
+    def __init__(self, annotations, image_width, image_height):
         if len(annotations) == 0:
             raise ValueError('Annotations is empty')
         self.annotations = annotations
+        self.image_width = image_width
+        self.image_height = image_height
 
     def __iter__(self):
         for annotation in self.annotations:
@@ -83,8 +85,8 @@ class Annotations:
                                        relative_y=geometry['y'],
                                        relative_width=geometry['width'],
                                        relative_height=geometry['height'],
-                                       img_width=500,
-                                       img_height=343)
+                                       img_width=self.image_width,
+                                       img_height=self.image_height)
             yield label, bounding_box
 
     def __str__(self):
