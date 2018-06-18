@@ -24,7 +24,7 @@ IMAGE_SAVE_PATH = os.environ.get("IMAGE_SAVE_PATH")
 ALLOWED_CATEGORIES = ["plastique|塑料", "metal|金属", "papier|纸", "verre|玻璃", "menage|绿色垃圾", "encombrants|大体积垃圾",
                       "electroniques|电子产品", "piles|电池",
                       "ampoule|灯泡", "vetements|衣服", "medicaments|药品", "carton|纸板", "humain|人类", "cigarette|香烟"]
-EXPECTED_NUMBER = 200
+EXPECTED_NUMBER = 250
 
 
 @login_required
