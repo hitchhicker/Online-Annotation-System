@@ -14,7 +14,13 @@ docker-compose rm -f && docker-compose build app
 ```commandline
 docker-compose up
 ```
-Go to [localhost:8000/login](localhost:8000/login)
+For mac user, get docker IP using the following command
+```commandline
+docker-machine ip
+```
+Then go to **{docker-machine ip}:8000/login**
+
+For linux users: go directly **localhost:8000/login**
  - `login`: bingbinadmin
  - `password`: bingbinpass
 ## Run unit test
