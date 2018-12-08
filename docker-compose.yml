@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    image: annotation
+    build: .
+    network_mode: "host"
+    ports:
+      - "8000:8000"
+    environment:
+      - XML_SAVE_PATH=data/xmls
+      - IMAGE_SAVE_PATH=data/images
+      - PYTHONPATH=/var/www/app/
+    volumes:
+      - ./data/xmls:/var/www/app/online_annotation_system/data/xmls
+      - ./data/images:/var/www/app/online_annotation_system/data/images
+    command: python server.py

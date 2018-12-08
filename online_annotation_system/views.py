@@ -13,9 +13,9 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from concurrent.futures import ThreadPoolExecutor
 
-from models import Object, Size, Annotations, DB
-from xml_generater import XMLGenerator
-from utils import get_image_width_and_height, get_no_repeated_save_path_and_filename, count_files_by_category
+from online_annotation_system.models import Object, Size, Annotations, DB
+from online_annotation_system.xml_generater import XMLGenerator
+from online_annotation_system.utils import get_image_width_and_height, get_no_repeated_save_path_and_filename, count_files_by_category
 
 executor = ThreadPoolExecutor(1)
 logger = logging.getLogger("views")

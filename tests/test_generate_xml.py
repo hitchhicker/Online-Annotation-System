@@ -1,5 +1,5 @@
-from models import BoundingBox, Object, Size
-from xml_generater import XMLGenerator
+from online_annotation_system.models import BoundingBox, Object, Size
+from online_annotation_system.xml_generater import XMLGenerator
 import xml.etree.cElementTree as ET
 import pytest
 

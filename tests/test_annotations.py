@@ -1,6 +1,6 @@
 import pytest
 
-from models import Annotations
+from online_annotation_system.models import Annotations
 
 
 @pytest.fixture

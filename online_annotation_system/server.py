@@ -6,8 +6,8 @@ from flask import Response
 from flask_principal import Principal
 from flask_login import LoginManager
 from flask_cors import CORS
-import views
-from models import DB
+from online_annotation_system import views
+from online_annotation_system.models import DB
 
 logging.basicConfig(filename='log', filemode='a', level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s')
@@ -47,4 +47,4 @@ if __name__ == '__main__':
     if os.environ.get("IMAGE_SAVE_PATH") is None:
         raise RuntimeError(
             "Please set environment variable IMAGE_SAVE_PATH,  this variable indicates where we save images")
-    app.run(host='0.0.0.0', debug=False)
+    app.run(host='0.0.0.0', debug=False, port=8000)
